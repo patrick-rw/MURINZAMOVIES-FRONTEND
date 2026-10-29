@@ -3,90 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURINZAMOVIES</title>
+    <title>OSHakur Films - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-theme text-white font-sans">
+<body class="bg-theme text-white font-sans pb-20">
 
     <!-- NAVBAR -->
-    <nav class="flex items-center justify-between px-4 md:px-8 py-4 bg-[#0b1121] sticky top-0 z-50 shadow-md">
-        <div class="flex items-center space-x-2">
-            <!-- Logo -->
-            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-xl cursor-pointer shadow-lg shadow-blue-500/30" onclick="window.location.href='index.html'">GS</div>
-            <h1 class="text-xl md:text-2xl font-bold tracking-wider hidden sm:block">MURINZAMOVIES</h1>
+    <nav class="flex items-center justify-between px-4 md:px-8 py-4 bg-[#050810] sticky top-0 z-50">
+        <div class="flex items-center space-x-2 cursor-pointer" onclick="window.location.href='index.html'">
+            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-xl text-blue-600">GS</div>
+            <h1 class="text-xl md:text-2xl font-bold hidden sm:block">OSHakur Films</h1>
         </div>
         
-        <!-- Search Bar -->
-        <div class="flex-1 max-w-xl mx-4 md:mx-8 relative">
-            <input type="text" id="searchInput" placeholder="Type your search..." autocomplete="off" class="w-full bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+        <div class="flex-1 max-w-2xl mx-4 relative">
+            <input type="text" id="searchInput" placeholder="Type your search" class="w-full bg-[#0a0f1c] text-white rounded-md py-2 px-4 pl-10 focus:outline-none border border-gray-700 focus:border-blue-500">
             <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            
-            <!-- Live Search Dropdown -->
-            <div id="searchResults" class="absolute top-12 left-0 w-full bg-gray-800 rounded-lg shadow-2xl hidden max-h-80 overflow-y-auto z-50 border border-gray-700"></div>
+            <div id="searchResults" class="absolute top-12 left-0 w-full bg-gray-800 rounded-md shadow-2xl hidden max-h-80 overflow-y-auto z-50"></div>
         </div>
 
-        <!-- Right Side Menu -->
-        <div class="flex items-center space-x-2 md:space-x-4">
-            <button class="bg-gray-800 p-2 rounded-md md:hidden hover:bg-gray-700 transition">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-            </button>
+        <div class="flex items-center space-x-3">
+            <a href="admin.html" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md font-semibold text-sm transition">Admin Panel</a>
         </div>
     </nav>
 
-    <!-- HERO BANNER (Dynamic) -->
-    <header id="heroBanner" class="relative h-[50vh] md:h-[65vh] w-full bg-cover bg-center bg-gray-900 transition-all duration-700" style="background-image: url('https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070&auto=format&fit=crop');">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/60 to-transparent"></div>
-        <div class="absolute bottom-8 left-4 md:bottom-16 md:left-10 max-w-2xl">
-            <div class="flex space-x-2 mb-3">
-                <span class="bg-blue-600 text-xs font-bold px-2 py-1 rounded shadow-md">FEATURED</span>
-                <span class="bg-gray-700/80 backdrop-blur text-xs font-bold px-2 py-1 rounded">HD</span>
-            </div>
-            <h2 id="heroTitle" class="text-3xl md:text-5xl lg:text-6xl font-extrabold mb-3 md:mb-4 drop-shadow-lg leading-tight">Loading Latest...</h2>
-            <p id="heroDesc" class="text-gray-300 mb-6 text-sm md:text-base line-clamp-3 drop-shadow-md">Please wait while we fetch the latest movies from the database...</p>
-            <div class="flex space-x-4">
-                <button id="heroWatchBtn" class="accent-blue px-6 md:px-8 py-3 rounded-md font-bold flex items-center text-sm md:text-base shadow-lg shadow-blue-600/30 transform hover:scale-105 transition">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> Watch Now
-                </button>
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="px-4 md:px-8 max-w-[1600px] mx-auto mt-6">
+        
+        <!-- HERO SECTION (Dynamic) -->
+        <div id="heroSection" class="relative w-full h-[50vh] md:h-[60vh] rounded-xl overflow-hidden mb-10 bg-gray-900 border border-gray-800">
+            <div class="absolute inset-0 bg-cover bg-center" id="heroImage" style="background-image: url('https://images.unsplash.com/photo-1626814026160-2237a95fc5a0');"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-[#0a0f1c] via-[#0a0f1c]/70 to-transparent"></div>
+            
+            <div class="absolute bottom-0 left-0 p-6 md:p-10 w-full md:w-2/3">
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="bg-blue-600 text-xs font-bold px-2 py-1 rounded shadow-md uppercase">Movie</span>
+                    <span class="text-gray-300 text-xs flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> 2 Parts</span>
+                </div>
+                <h1 id="heroTitle" class="text-4xl md:text-5xl font-bold mb-3">Loading...</h1>
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="w-6 h-6 bg-gray-600 rounded-full"></div>
+                    <span id="heroUploader" class="text-sm text-gray-300">Loading...</span>
+                </div>
+                <p id="heroDesc" class="text-gray-300 text-sm md:text-base mb-6 line-clamp-3">Loading description...</p>
+                <div class="flex space-x-3">
+                    <button id="heroBtn" class="bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded font-bold flex items-center transition"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> Watch Now</button>
+                    <button class="bg-gray-800 border border-gray-600 hover:bg-gray-700 px-6 py-2.5 rounded font-bold transition">Trailer</button>
+                </div>
             </div>
         </div>
-    </header>
 
-    <!-- MAIN CONTENT -->
-    <main class="px-4 md:px-8 pb-20 -mt-12 md:-mt-24 relative z-10">
-        
-        <!-- Section: Trending -->
-        <section class="mb-12">
-            <div class="flex justify-between items-end mb-4 border-b border-blue-900/50 pb-2">
-                <h3 class="text-xl md:text-2xl font-bold flex items-center">
-                    <span class="w-1.5 h-6 bg-blue-600 mr-2 rounded-full"></span> Trending Now
-                </h3>
-                <a href="#" class="text-xs md:text-sm text-blue-400 hover:text-blue-300 transition">View More &rarr;</a>
-            </div>
-            <div id="trending-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-5">
-                <!-- Movie Cards injected via main.js -->
-            </div>
-        </section>
-
-        <!-- Section: Recent -->
-        <section class="mb-12">
-            <div class="flex justify-between items-end mb-4 border-b border-blue-900/50 pb-2">
-                <h3 class="text-xl md:text-2xl font-bold flex items-center">
-                    <span class="w-1.5 h-6 bg-blue-600 mr-2 rounded-full"></span> Recently Added
-                </h3>
-                <a href="#" class="text-xs md:text-sm text-blue-400 hover:text-blue-300 transition">View More &rarr;</a>
-            </div>
-            <div id="recent-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-5">
-                <!-- Movie Cards injected via main.js -->
-            </div>
-        </section>
+        <!-- DYNAMIC SECTIONS CONTAINER -->
+        <div id="sectionsContainer">
+            <!-- Sections will be injected here by main.js -->
+        </div>
 
     </main>
-
-    <!-- FOOTER -->
-    <footer class="border-t border-gray-800 py-8 text-center text-gray-500 text-sm">
-        <p>&copy; 2026 MURINZAMOVIES. All rights reserved.</p>
-    </footer>
 
     <script src="js/main.js"></script>
 </body>

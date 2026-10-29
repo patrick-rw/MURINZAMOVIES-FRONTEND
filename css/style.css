@@ -1,15 +1,59 @@
 /* frontend/css/style.css */
 
-/* Force the dark theme background */
+/* =========================================
+   1. GLOBAL THEME & BASE STYLES
+   ========================================= */
 body {
-    background-color: #0f172a !important;
+    /* Very dark navy blue background */
+    background-color: #0a0f1c !important; 
     color: #ffffff;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
-/* Blue accent colors */
+/* Selection color */
+::selection {
+    background-color: #2563eb;
+    color: white;
+}
+
+/* =========================================
+   2. CUSTOM SCROLLBARS (Dark Theme)
+   ========================================= */
+/* Vertical Scrollbar */
+::-webkit-scrollbar { 
+    width: 8px; 
+}
+::-webkit-scrollbar-track { 
+    background: #0a0f1c; 
+}
+::-webkit-scrollbar-thumb { 
+    background: #1e3a8a; /* Dark blue */
+    border-radius: 4px; 
+}
+::-webkit-scrollbar-thumb:hover { 
+    background: #2563eb; /* Bright blue */
+}
+
+/* Horizontal Scrollbar (For movie rows) */
+::-webkit-scrollbar:horizontal {
+    height: 6px;
+}
+::-webkit-scrollbar-thumb:horizontal {
+    background: #1e3a8a;
+    border-radius: 4px;
+}
+
+/* Hide scrollbar track for horizontal rows to keep it clean */
+.overflow-x-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* =========================================
+   3. UTILITY & ACCENT CLASSES
+   ========================================= */
 .accent-blue { 
     background-color: #2563eb; 
     color: white; 
@@ -17,25 +61,82 @@ body {
 }
 .accent-blue:hover { 
     background-color: #1d4ed8; 
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
 /* Gradient overlay for movie cards */
 .card-gradient { 
-    background: linear-gradient(to top, #0f172a 10%, transparent 100%); 
+    background: linear-gradient(to top, rgba(10, 15, 28, 0.95) 0%, transparent 100%); 
 }
 
-/* Hide scrollbar for a cleaner look */
-::-webkit-scrollbar {
-    width: 8px;
+/* =========================================
+   4. ADMIN PANEL SPECIFIC STYLES
+   ========================================= */
+
+/* The overlay that appears when hovering over a movie in admin mode */
+.admin-overlay {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    backdrop-filter: blur(2px); /* Slight blur effect on the poster */
 }
-::-webkit-scrollbar-track {
-    background: #0f172a; 
+
+/* Show overlay when hovering over the container */
+.movie-card-container:hover .admin-overlay {
+    opacity: 1;
 }
-::-webkit-scrollbar-thumb {
-    background: #334155; 
-    border-radius: 4px;
+
+/* Ensure the movie card has a relative position so the overlay stays inside */
+.movie-card-container {
+    position: relative;
 }
-::-webkit-scrollbar-thumb:hover {
-    background: #475569; 
+
+/* The Big "+" Dashed Button for adding movies to a specific category */
+.add-movie-btn {
+    transition: all 0.3s ease;
+}
+.add-movie-btn:hover {
+    background-color: rgba(37, 99, 235, 0.1);
+    border-color: #2563eb;
+    transform: scale(1.02);
+}
+
+/* =========================================
+   5. MODAL POPUP STYLES (For Add/Edit Form)
+   ========================================= */
+#movieModal {
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
+}
+
+#movieModal > div {
+    animation: slideUp 0.3s ease-out;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom styling for form inputs to make them look modern */
+input, textarea {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, textarea:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    outline: none;
 }

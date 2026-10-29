@@ -1,56 +1,20 @@
+// js/admin.js
+
+// 1. Ensure this URL is EXACTLY your Render URL (no trailing slash)
 const API_URL = 'https://murinzamoviess.onrender.com/api';
 
-// --- 1. LOGIN LOGIC ---
-// Set your desired Username and Password here
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "movieshow2026"; // Change this to a strong password!
-
-const loginScreen = document.getElementById('loginScreen');
-const adminPanel = document.getElementById('adminPanel');
-const loginForm = document.getElementById('loginForm');
-const loginError = document.getElementById('loginError');
-const logoutBtn = document.getElementById('logoutBtn');
-
-// Check if admin is already logged in (saved in browser session)
-document.addEventListener('DOMContentLoaded', () => {
-    if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
-        showAdminPanel();
-    }
-});
-
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const user = document.getElementById('adminUser').value;
-    const pass = document.getElementById('adminPass').value;
-
-    if (user === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
-        sessionStorage.setItem('isAdminLoggedIn', 'true');
-        loginError.classList.add('hidden');
-        showAdminPanel();
-    } else {
-        loginError.classList.remove('hidden');
-    }
-});
-
-function showAdminPanel() {
-    loginScreen.classList.add('hidden');
-    adminPanel.classList.remove('hidden');
-}
-
-logoutBtn.addEventListener('click', () => {
-    sessionStorage.removeItem('isAdminLoggedIn');
-    window.location.reload(); // Reload page to show login screen again
-});
-
-
-// --- 2. ADD MOVIE LOGIC ---
 document.getElementById('addMovieForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    // 2. THIS IS CRUCIAL: Prevents the page from refreshing
+    e.preventDefault(); 
     
     const submitBtn = document.getElementById('submitBtn');
-    submitBtn.innerText = "Uploading...";
+    const messageBox = document.getElementById('message');
+    
+    submitBtn.innerText = "Uploading... Please wait (Render might be waking up)";
     submitBtn.disabled = true;
+    messageBox.classList.add('hidden');
 
+    // Gather data
     const watchUrl = document.getElementById('watchUrl').value;
     const downloadUrl = document.getElementById('downloadUrl').value;
     
@@ -68,6 +32,8 @@ document.getElementById('addMovieForm').addEventListener('submit', async (e) => 
         downloadLinks: downloadLinks
     };
 
+    console.log("Sending data to backend:", movieData);
+
     try {
         const res = await fetch(`${API_URL}/movies`, {
             method: 'POST',
@@ -75,22 +41,27 @@ document.getElementById('addMovieForm').addEventListener('submit', async (e) => 
             body: JSON.stringify(movieData)
         });
         
+        console.log("Response Status:", res.status);
+
         if (res.ok) {
-            const messageBox = document.getElementById('message');
-            messageBox.innerText = "✅ Movie added successfully!";
+            messageBox.innerText = "✅ Movie uploaded successfully!";
+            messageBox.className = "mt-4 text-center text-green-400 font-bold p-3 bg-green-900/30 rounded border border-green-800";
             messageBox.classList.remove('hidden');
             e.target.reset();
-            window.scrollTo(0, 0);
-            setTimeout(() => messageBox.classList.add('hidden'), 4000);
         } else {
             const errData = await res.json();
-            alert('Error: ' + errData.error);
+            console.error("Backend Error:", errData);
+            messageBox.innerText = `❌ Error: ${errData.error || 'Failed to upload'}`;
+            messageBox.className = "mt-4 text-center text-red-400 font-bold p-3 bg-red-900/30 rounded border border-red-800";
+            messageBox.classList.remove('hidden');
         }
     } catch (err) {
-        alert('Network error. Check console.');
-        console.error(err);
+        console.error("Network Error:", err);
+        messageBox.innerText = "❌ Network Error. The backend might be asleep or unreachable.";
+        messageBox.className = "mt-4 text-center text-red-400 font-bold p-3 bg-red-900/30 rounded border border-red-800";
+        messageBox.classList.remove('hidden');
     } finally {
-        submitBtn.innerText = "Upload Movie";
+        submitBtn.innerText = "Upload Movie to Database";
         submitBtn.disabled = false;
     }
 });

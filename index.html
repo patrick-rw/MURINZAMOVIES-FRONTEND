@@ -3,140 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - OSHakur Films</title>
+    <title>OSHakur Films - Home</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-theme text-white font-sans pb-20">
+<body class="bg-[#0a0f1c] text-white font-sans pb-20 overflow-x-hidden">
 
-    <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="fixed inset-0 bg-[#0a0f1c] z-[100] flex items-center justify-center p-4">
-        <div class="w-full max-w-md bg-[#111827] p-8 rounded-xl border border-gray-800 shadow-2xl">
-            <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-4">GS</div>
-                <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-                <p class="text-gray-400 text-sm mt-1">Login to manage movies</p>
-            </div>
-            <form id="loginForm" class="space-y-4">
-                <input type="text" id="username" placeholder="Username" required class="w-full p-3 rounded bg-[#0a0f1c] border border-gray-700 focus:border-blue-500 focus:outline-none">
-                <input type="password" id="password" placeholder="Password" required class="w-full p-3 rounded bg-[#0a0f1c] border border-gray-700 focus:border-blue-500 focus:outline-none">
-                <p id="loginError" class="text-red-500 text-sm hidden">Invalid Credentials!</p>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 font-bold py-3 rounded transition">Login</button>
-            </form>
+    <!-- NAVBAR -->
+    <nav class="flex items-center justify-between px-4 md:px-8 py-4 bg-[#050810] sticky top-0 z-50 border-b border-gray-800/50">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href='index.html'">
+            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-xl text-blue-600 shadow-lg shadow-blue-500/20">GS</div>
+            <h1 class="text-xl md:text-2xl font-bold tracking-wide hidden sm:block">OSHakur Films</h1>
         </div>
-    </div>
+        
+        <!-- Search Bar -->
+        <div class="flex-1 max-w-2xl mx-4 relative hidden md:block">
+            <input type="text" id="searchInput" placeholder="Type your search" autocomplete="off" class="w-full bg-[#0a0f1c] text-white rounded-md py-2.5 px-4 pl-10 focus:outline-none border border-gray-700 focus:border-blue-500 transition-colors">
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            
+            <!-- Live Search Results Dropdown -->
+            <div id="searchResults" class="absolute top-14 left-0 w-full bg-[#111827] rounded-md shadow-2xl hidden max-h-96 overflow-y-auto z-50 border border-gray-700"></div>
+        </div>
 
-    <!-- ADMIN NAVBAR (Same as index but says Admin) -->
-    <nav class="flex items-center justify-between px-4 md:px-8 py-4 bg-[#050810] sticky top-0 z-40">
-        <div class="flex items-center space-x-2">
-            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-xl text-blue-600">GS</div>
-            <h1 class="text-xl md:text-2xl font-bold hidden sm:block">Admin Mode</h1>
-        </div>
+        <!-- Right Side Buttons -->
         <div class="flex items-center space-x-3">
-            <a href="index.html" class="text-sm text-gray-300 hover:text-white">View Public Site</a>
-            <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md font-semibold text-sm transition">Logout</button>
+            <a href="admin.html" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md font-semibold text-sm transition hidden sm:block">Admin</a>
+            <button class="bg-[#0a0f1c] border border-gray-700 hover:bg-gray-800 p-2 rounded-md transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
         </div>
     </nav>
 
-    <!-- HERO SECTION (Admin version - includes Edit) -->
-    <main class="px-4 md:px-8 max-w-[1600px] mx-auto mt-6">
-        <div id="heroSection" class="relative w-full h-[50vh] rounded-xl overflow-hidden mb-10 bg-gray-900 border border-gray-800 hidden">
-            <div class="absolute inset-0 bg-cover bg-center" id="heroImage"></div>
-            <div class="absolute inset-0 bg-gradient-to-r from-[#0a0f1c] via-[#0a0f1c]/70 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 p-6 md:p-10 w-full md:w-2/3">
-                <h1 id="heroTitle" class="text-4xl font-bold mb-3"></h1>
-                <div class="flex space-x-3 mt-4">
-                    <button id="heroEditBtn" class="bg-yellow-600 hover:bg-yellow-700 px-6 py-2.5 rounded font-bold flex items-center transition text-black">Edit Hero Movie</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- DYNAMIC SECTIONS CONTAINER (Admin version) -->
-        <div id="sectionsContainer">
-            <!-- Sections injected by admin.js with + buttons -->
-        </div>
-    </main>
-
-    <!-- HIDDEN FORM MODAL (Used for Add & Edit) -->
-    <div id="movieModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-[#111827] w-full max-w-2xl rounded-xl border border-gray-700 max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-gray-700 flex justify-between items-center sticky top-0 bg-[#111827] z-10">
-                <h2 id="modalTitle" class="text-xl font-bold text-blue-400">Add New Movie</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white">&times;</button>
-            </div>
-            <form id="movieForm" class="p-6 space-y-4">
-                <input type="hidden" id="movieId">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Title</label>
-                        <input type="text" id="title" required class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Category</label>
-                        <input type="text" id="category" required class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500">
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Genre (e.g. Action)</label>
-                        <input type="text" id="genre" class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Poster URL</label>
-                        <input type="url" id="posterUrl" required class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-400 mb-1">Description</label>
-                    <textarea id="description" rows="3" class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500"></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Watch Link (Part A)</label>
-                        <input type="url" id="watchUrl" class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-sm text-gray-400 mb-1">Download Link (Part A)</label>
-                        <input type="url" id="downloadUrl" class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500">
-                    </div>
-                </div>
-                <div class="flex items-center space-x-2 pt-2">
-                    <input type="checkbox" id="isTrending" class="w-4 h-4 text-blue-600 rounded bg-gray-700 border-gray-600">
-                    <label for="isTrending" class="text-sm text-gray-300">Show in Hero/Trending Section</label>
-                </div>
-                
-                <button type="submit" id="saveBtn" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded font-bold mt-4">Save Movie</button>
-            </form>
-        </div>
+    <!-- MOBILE SEARCH (Visible only on small screens) -->
+    <div class="px-4 py-3 md:hidden bg-[#050810] border-b border-gray-800 relative">
+        <input type="text" id="mobileSearchInput" placeholder="Search movies..." class="w-full bg-[#0a0f1c] text-white rounded-md py-2 px-4 border border-gray-700 focus:border-blue-500 focus:outline-none">
+        <div id="mobileSearchResults" class="absolute top-14 left-4 right-4 bg-[#111827] rounded-md shadow-2xl hidden max-h-60 overflow-y-auto z-50 border border-gray-700"></div>
     </div>
 
-    <!-- SCRIPTS -->
-    <script>
-        // Auth Check
-        if(sessionStorage.getItem('isAdmin') !== 'true') {
-            document.getElementById('loginScreen').classList.remove('hidden');
-        } else {
-            document.getElementById('loginScreen').classList.add('hidden');
-            // Load Admin Logic dynamically
-            const script = document.createElement('script');
-            script.src = 'js/admin.js';
-            document.body.appendChild(script);
-        }
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="px-0 md:px-8 max-w-[1600px] mx-auto mt-0 md:mt-6">
+        
+        <!-- HERO SECTION -->
+        <div id="heroSection" class="relative w-full h-[45vh] md:h-[60vh] md:rounded-xl overflow-hidden mb-8 bg-gray-900">
+            <!-- Background Image with Blur Overlay -->
+            <div class="absolute inset-0 bg-cover bg-center transition-all duration-700" id="heroImage" style="background-image: url('https://images.unsplash.com/photo-1626814026160-2237a95fc5a0');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0a0f1c] via-[#0a0f1c]/70 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-[#0a0f1c] via-[#0a0f1c]/50 to-transparent"></div>
+            
+            <!-- Hero Content -->
+            <div class="absolute bottom-0 left-0 p-6 md:p-12 w-full md:w-2/3 z-10">
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="bg-blue-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider">Featured</span>
+                    <span class="text-gray-300 text-xs md:text-sm flex items-center bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> 2 Parts
+                    </span>
+                </div>
+                
+                <h1 id="heroTitle" class="text-3xl md:text-5xl font-extrabold mb-3 drop-shadow-lg leading-tight">Loading Latest...</h1>
+                
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="w-6 h-6 md:w-8 md:h-8 bg-gray-600 rounded-full flex items-center justify-center text-xs font-bold">M</div>
+                    <span id="heroUploader" class="text-sm md:text-base text-gray-300 font-medium">Mungeli</span>
+                </div>
+                
+                <p id="heroDesc" class="text-gray-300 text-sm md:text-base mb-6 line-clamp-3 md:line-clamp-4 max-w-2xl drop-shadow-md">Loading description...</p>
+                
+                <div class="flex space-x-3">
+                    <button id="heroBtn" class="bg-blue-600 hover:bg-blue-700 px-6 md:px-8 py-3 rounded-md font-bold flex items-center transition shadow-lg shadow-blue-600/30 text-sm md:text-base">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> Watch Now
+                    </button>
+                    <button class="bg-gray-800/80 backdrop-blur-sm border border-gray-600 hover:bg-gray-700 px-6 md:px-8 py-3 rounded-md font-bold transition text-sm md:text-base">Trailer</button>
+                </div>
+            </div>
+        </div>
 
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            if(document.getElementById('username').value === "admin" && document.getElementById('password').value === "movie123") {
-                sessionStorage.setItem('isAdmin', 'true');
-                window.location.reload();
-            } else {
-                document.getElementById('loginError').classList.remove('hidden');
-            }
-        });
+        <!-- DYNAMIC SECTIONS CONTAINER (Populated by main.js) -->
+        <div id="sectionsContainer" class="px-4 md:px-0">
+            <!-- Loading State -->
+            <div class="flex justify-center items-center h-40">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+            </div>
+        </div>
 
-        function logout() {
-            sessionStorage.removeItem('isAdmin');
-            window.location.href = 'index.html';
-        }
-    </script>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-16 bg-[#050810] border-t border-gray-800 py-10 px-4 md:px-8">
+        <div class="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-sm text-blue-600">GS</div>
+                    <h2 class="text-lg font-bold">OSHakur Films</h2>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed">Reba Agasobanuoye aho waba uri hose kubuntu. Abasobanuzi, Rocky Kimomo, Junior Giti, Sankara, Savimbi, PK, Gaheza n'abandi.</p>
+            </div>
+            <div>
+                <h3 class="text-white font-bold mb-4 border-l-2 border-blue-600 pl-2">Quick Links</h3>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="#" class="hover:text-blue-400 transition">About Us</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-blue-400 transition">Terms & Conditions</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-white font-bold mb-4 border-l-2 border-blue-600 pl-2">Follow Us</h3>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li><a href="#" class="flex items-center hover:text-blue-400 transition"><span class="mr-2">▶</span> YouTube</a></li>
+                    <li><a href="#" class="flex items-center hover:text-blue-400 transition"><span class="mr-2">📷</span> Instagram</a></li>
+                    <li><a href="#" class="flex items-center hover:text-blue-400 transition"><span class="mr-2">🎵</span> TikTok</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-white font-bold mb-4 border-l-2 border-blue-600 pl-2">Contact</h3>
+                <ul class="space-y-2 text-sm text-gray-400">
+                    <li class="flex items-center"><span class="mr-2">📞</span> +250 788 821 628</li>
+                    <li class="flex items-center"><span class="mr-2">📞</span> +250 788 821 628</li>
+                    <li class="flex items-center"><span class="mr-2">✉️</span> info@oshakurfilms.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-[1600px] mx-auto mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
+            Copyright © 2026 OSHakurFilms. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- MAIN JAVASCRIPT -->
+    <script src="js/main.js"></script>
 </body>
 </html>

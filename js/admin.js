@@ -1,75 +1,171 @@
 // frontend/js/admin.js
-
-// Make sure this URL matches your Render URL EXACTLY. 
-// It should start with https:// and end with /api
 const API_URL = 'https://murinzamoviess.onrender.com/api';
+let allMoviesData = [];
 
-document.getElementById('addMovieForm').addEventListener('submit', async (e) => {
-    e.preventDefault(); 
-    
-    const submitBtn = document.getElementById('submitBtn');
-    const messageBox = document.getElementById('message');
-    
-    // Reset UI
-    submitBtn.innerText = "Uploading... Please wait (Render might be waking up)";
-    submitBtn.disabled = true;
-    messageBox.classList.add('hidden');
+// 1. HTML Generators
+function createAdminMovieCard(movie) {
+    return `
+        <div class="movie-card-container block w-[160px] md:w-[200px] flex-shrink-0 relative group">
+            <div class="relative rounded-lg overflow-hidden aspect-[2/3] bg-gray-800 border border-gray-700/50 mb-2">
+                <img src="${movie.posterUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+                
+                <!-- ADMIN OVERLAY -->
+                <div class="admin-overlay absolute inset-0 bg-black/70 flex flex-col items-center justify-center space-y-2">
+                    <button onclick="openEditModal('${movie._id}')" class="bg-yellow-600 hover:bg-yellow-700 text-white text-xs font-bold px-3 py-1.5 rounded w-24">Edit</button>
+                    <button onclick="deleteMovie('${movie._id}')" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-1.5 rounded w-24">Delete</button>
+                </div>
+                
+                <div class="absolute top-2 left-2 flex flex-col space-y-1 pointer-events-none">
+                    ${movie.genre ? `<span class="bg-red-600 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase w-max">${movie.genre}</span>` : ''}
+                </div>
+                <div class="absolute bottom-0 w-full p-2 card-gradient pointer-events-none">
+                    <h4 class="text-sm font-bold text-white truncate">${movie.title}</h4>
+                </div>
+            </div>
+        </div>
+    `;
+}
 
-    // Gather Data
-    const watchUrl = document.getElementById('watchUrl').value.trim();
-    const downloadUrl = document.getElementById('downloadUrl').value.trim();
+// 2. Load Data
+async function loadAdminData() {
+    try {
+        const res = await fetch(`${API_URL}/movies`);
+        allMoviesData = await res.json();
+
+        if (allMoviesData.length === 0) {
+            document.getElementById('sectionsContainer').innerHTML = '<p class="text-center text-gray-500 mt-10">No movies yet. Add one below!</p>';
+            return;
+        }
+
+        // Setup Hero
+        const heroMovie = allMoviesData.find(m => m.isTrending) || allMoviesData[0];
+        document.getElementById('heroSection').classList.remove('hidden');
+        document.getElementById('heroTitle').innerText = heroMovie.title;
+        document.getElementById('heroImage').style.backgroundImage = `url('${heroMovie.posterUrl}')`;
+        document.getElementById('heroEditBtn').onclick = () => openEditModal(heroMovie._id);
+
+        // Group & Render Sections with "+" Buttons
+        const categories = [...new Set(allMoviesData.map(m => m.category))];
+        const container = document.getElementById('sectionsContainer');
+        
+        let sectionsHTML = '';
+        categories.forEach(cat => {
+            const catMovies = allMoviesData.filter(m => m.category === cat);
+            
+            sectionsHTML += `
+                <div class="mb-12">
+                    <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-2">
+                        <h2 class="text-2xl font-bold border-l-4 border-blue-600 pl-3">${cat}</h2>
+                    </div>
+                    <div class="flex space-x-4 overflow-x-auto pb-4 snap-x items-center">
+                        
+                        <!-- BIG PLUS BUTTON FOR THIS SPECIFIC CATEGORY -->
+                        <button onclick="openAddModal('${cat}')" class="w-[160px] md:w-[200px] aspect-[2/3] flex-shrink-0 bg-gray-900 border-2 border-dashed border-gray-700 hover:border-blue-500 rounded-lg flex flex-col items-center justify-center text-gray-500 hover:text-blue-400 transition">
+                            <span class="text-6xl font-light">+</span>
+                            <span class="text-sm font-bold mt-2">Add to ${cat}</span>
+                        </button>
+
+                        ${catMovies.map(createAdminMovieCard).join('')}
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = sectionsHTML;
+
+    } catch (err) {
+        console.error("Failed to load", err);
+    }
+}
+
+// 3. Modal Controls
+function openAddModal(defaultCategory = '') {
+    document.getElementById('movieForm').reset();
+    document.getElementById('movieId').value = '';
+    document.getElementById('modalTitle').innerText = 'Add New Movie';
+    document.getElementById('category').value = defaultCategory;
+    document.getElementById('movieModal').classList.remove('hidden');
+}
+
+function openEditModal(id) {
+    const movie = allMoviesData.find(m => m._id === id);
+    if(!movie) return;
+
+    document.getElementById('movieId').value = movie._id;
+    document.getElementById('title').value = movie.title;
+    document.getElementById('category').value = movie.category;
+    document.getElementById('genre').value = movie.genre || '';
+    document.getElementById('posterUrl').value = movie.posterUrl;
+    document.getElementById('description').value = movie.description || '';
     
-    // Only add links if the user typed something
-    const watchLinks = watchUrl ? [{ quality: "Part A", url: watchUrl }] : [];
-    const downloadLinks = downloadUrl ? [{ quality: "Part A", url: downloadUrl }] : [];
+    // Extract first watch/download link
+    document.getElementById('watchUrl').value = movie.watchLinks?.[0]?.url || '';
+    document.getElementById('downloadUrl').value = movie.downloadLinks?.[0]?.url || '';
+    document.getElementById('isTrending').checked = movie.isTrending;
+
+    document.getElementById('modalTitle').innerText = 'Edit Movie';
+    document.getElementById('movieModal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('movieModal').classList.add('hidden');
+}
+
+// 4. Save (Add or Update)
+document.getElementById('movieForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('movieId').value;
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.innerText = "Saving...";
+    saveBtn.disabled = true;
+
+    const watchUrl = document.getElementById('watchUrl').value;
+    const downloadUrl = document.getElementById('downloadUrl').value;
 
     const movieData = {
-        title: document.getElementById('title').value.trim(),
-        category: document.getElementById('category').value.trim(),
-        genre: document.getElementById('genre').value.trim(),
-        posterUrl: document.getElementById('posterUrl').value.trim(),
-        description: document.getElementById('description').value.trim(),
+        title: document.getElementById('title').value,
+        category: document.getElementById('category').value,
+        genre: document.getElementById('genre').value,
+        posterUrl: document.getElementById('posterUrl').value,
+        description: document.getElementById('description').value,
         isTrending: document.getElementById('isTrending').checked,
-        watchLinks: watchLinks,
-        downloadLinks: downloadLinks
+        watchLinks: watchUrl ? [{ quality: "Part A", url: watchUrl }] : [],
+        downloadLinks: downloadUrl ? [{ quality: "Part A", url: downloadUrl }] : []
     };
 
-    console.log("Attempting to send data to:", `${API_URL}/movies`);
-    console.log("Data being sent:", movieData);
-
     try {
-        const res = await fetch(`${API_URL}/movies`, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json'
-            },
+        const url = id ? `${API_URL}/movies/${id}` : `${API_URL}/movies`;
+        const method = id ? 'PUT' : 'POST'; // Note: You need to add PUT route to backend!
+
+        const res = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(movieData)
         });
-        
-        console.log("Response Status Code:", res.status);
 
-        if (res.ok) {
-            const savedMovie = await res.json();
-            console.log("Success! Saved Movie:", savedMovie);
-            
-            messageBox.innerText = "✅ Movie uploaded successfully! It is now live.";
-            messageBox.className = "mt-4 text-center text-green-400 font-bold p-3 bg-green-900/30 rounded border border-green-800";
-            messageBox.classList.remove('hidden');
-            e.target.reset();
+        if(res.ok) {
+            closeModal();
+            loadAdminData(); // Refresh UI
         } else {
-            const errData = await res.json();
-            console.error("Backend Error Response:", errData);
-            messageBox.innerText = `❌ Error: ${errData.error || 'Failed to upload'}`;
-            messageBox.className = "mt-4 text-center text-red-400 font-bold p-3 bg-red-900/30 rounded border border-red-800";
-            messageBox.classList.remove('hidden');
+            alert("Error saving movie. Check backend logs.");
         }
-    } catch (err) {
-        console.error("Network/Fetch Error:", err);
-        messageBox.innerText = "❌ Network Error. Please check your internet or wait 30 seconds and try again (Backend waking up).";
-        messageBox.className = "mt-4 text-center text-red-400 font-bold p-3 bg-red-900/30 rounded border border-red-800";
-        messageBox.classList.remove('hidden');
+    } catch(err) {
+        alert("Network error.");
     } finally {
-        submitBtn.innerText = "Upload Movie to Database";
-        submitBtn.disabled = false;
+        saveBtn.innerText = "Save Movie";
+        saveBtn.disabled = false;
     }
 });
+
+// 5. Delete
+async function deleteMovie(id) {
+    if(!confirm("Are you sure you want to delete this movie?")) return;
+    try {
+        const res = await fetch(`${API_URL}/movies/${id}`, { method: 'DELETE' });
+        if(res.ok) loadAdminData();
+    } catch(err) {
+        alert("Error deleting");
+    }
+}
+
+// Start
+loadAdminData();

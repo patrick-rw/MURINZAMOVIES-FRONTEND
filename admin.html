@@ -3,81 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - MOVIE SHOW</title>
+    <title>Admin Access - MOVIE SHOW</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-white p-4 md:p-8 font-sans flex items-center justify-center min-h-screen">
+<body class="bg-gray-900 text-white font-sans min-h-screen flex items-center justify-center p-4">
 
-    <!-- LOGIN SCREEN (Visible by default) -->
-    <div id="loginScreen" class="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-2xl border border-gray-700">
+    <!-- LOGIN SCREEN (Visible First) -->
+    <div id="loginScreen" class="w-full max-w-md bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
         <div class="text-center mb-8">
-            <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center font-bold text-3xl mx-auto mb-4">GS</div>
+            <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-4 shadow-lg shadow-blue-500/30">GS</div>
             <h1 class="text-2xl font-bold text-white">Admin Access</h1>
-            <p class="text-gray-400 text-sm mt-1">Please enter your credentials to continue.</p>
+            <p class="text-gray-400 text-sm mt-1">Restricted Area. Please log in.</p>
         </div>
         
         <form id="loginForm" class="space-y-4">
             <div>
                 <label class="block text-sm font-medium mb-1 text-gray-300">Username</label>
-                <input type="text" id="adminUser" required class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                <input type="text" id="username" required class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none transition-colors">
             </div>
             <div>
                 <label class="block text-sm font-medium mb-1 text-gray-300">Password</label>
-                <input type="password" id="adminPass" required class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                <input type="password" id="password" required class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none transition-colors">
             </div>
-            <p id="loginError" class="text-red-500 text-sm hidden text-center font-bold">Invalid Username or Password!</p>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition duration-200 mt-4">Login</button>
+            
+            <p id="loginError" class="text-red-500 text-sm text-center hidden font-bold">Invalid Credentials!</p>
+            
+            <button type="submit" class="w-full accent-blue font-bold py-3 px-4 rounded transition duration-200 mt-2 shadow-lg">Login</button>
         </form>
-        <div class="text-center mt-6">
-            <a href="index.html" class="text-sm text-gray-400 hover:text-white">&larr; Back to Site</a>
-        </div>
     </div>
 
     <!-- ADMIN PANEL (Hidden by default) -->
-    <div id="adminPanel" class="w-full max-w-4xl bg-gray-800 p-6 md:p-8 rounded-lg shadow-2xl hidden relative">
-        
-        <button id="logoutBtn" class="absolute top-6 right-6 text-sm bg-red-600 hover:bg-red-700 px-3 py-1 rounded">Logout</button>
-
-        <div class="mb-6 border-b border-gray-700 pb-4">
-            <h1 class="text-2xl font-bold text-blue-400">Add New Movie</h1>
-            <p class="text-sm text-gray-400">Welcome back, Admin.</p>
+    <div id="adminPanel" class="w-full max-w-4xl bg-gray-800 p-6 md:p-8 rounded-xl shadow-2xl border border-gray-700 hidden my-8">
+        <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+            <h1 class="text-2xl font-bold text-blue-400">Upload New Movie</h1>
+            <button onclick="logout()" class="text-sm bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition">Logout</button>
         </div>
         
         <form id="addMovieForm" class="space-y-5">
             <div class="grid md:grid-cols-2 gap-5">
                 <div>
-                    <label class="block text-sm font-medium mb-1 text-gray-300">Title</label>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">Movie Title *</label>
                     <input type="text" id="title" required class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1 text-gray-300">Category</label>
-                    <input type="text" id="category" required placeholder="e.g., Action, Trending" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                    <label class="block text-sm font-medium mb-1 text-gray-300">Category *</label>
+                    <input type="text" id="category" required placeholder="e.g., Action, Trending, Indian" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
                 </div>
             </div>
 
             <div class="grid md:grid-cols-2 gap-5">
                 <div>
                     <label class="block text-sm font-medium mb-1 text-gray-300">Genre</label>
-                    <input type="text" id="genre" placeholder="e.g., Sci-Fi, Romance" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
+                    <input type="text" id="genre" placeholder="e.g., Sci-Fi, Romance, Horror" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1 text-gray-300">Poster URL (GitHub Raw Link)</label>
+                    <label class="block text-sm font-medium mb-1 text-gray-300">Poster URL (GitHub Raw Link) *</label>
                     <input type="url" id="posterUrl" required placeholder="https://raw.githubusercontent.com/..." class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none">
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-medium mb-1 text-gray-300">Description</label>
+                <label class="block text-sm font-medium mb-1 text-gray-300">Description / Summary</label>
                 <textarea id="description" rows="3" class="w-full p-3 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none"></textarea>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-5 bg-gray-900 p-4 rounded border border-gray-700">
+            <!-- Links Inputs (Part A) -->
+            <div class="grid md:grid-cols-2 gap-5 bg-gray-900 p-4 rounded-lg border border-gray-700">
                 <div>
-                    <label class="block text-sm font-medium mb-1 text-blue-300">Watch Link (e.g., Part A)</label>
+                    <label class="block text-sm font-medium mb-1 text-blue-300">Watch Link (Part A)</label>
                     <input type="url" id="watchUrl" placeholder="https://..." class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1 text-green-300">Download Link (e.g., Part A)</label>
+                    <label class="block text-sm font-medium mb-1 text-green-300">Download Link (Part A)</label>
                     <input type="url" id="downloadUrl" placeholder="https://..." class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:border-blue-500 focus:outline-none text-sm">
                 </div>
             </div>
@@ -87,12 +84,49 @@
                 <label for="isTrending" class="text-sm font-medium text-gray-300">Mark as Trending (Appears in Hero Banner)</label>
             </div>
 
-            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition duration-200 mt-6 shadow-lg">Upload Movie</button>
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition duration-200 mt-6 shadow-lg shadow-blue-600/30">Upload Movie to Database</button>
         </form>
 
         <div id="message" class="mt-4 text-center text-green-400 font-bold hidden p-3 bg-green-900/30 rounded border border-green-800"></div>
     </div>
 
+    <!-- LOGIN & ADMIN LOGIC -->
+    <script>
+        // --- SET YOUR ADMIN CREDENTIALS HERE ---
+        const ADMIN_USER = "admin";
+        const ADMIN_PASS = "movie123"; 
+        // ---------------------------------------
+
+        // Check session on load
+        if(sessionStorage.getItem('isAdmin') === 'true') {
+            showPanel();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            if(user === ADMIN_USER && pass === ADMIN_PASS) {
+                sessionStorage.setItem('isAdmin', 'true');
+                showPanel();
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        });
+
+        function showPanel() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+        }
+
+        function logout() {
+            sessionStorage.removeItem('isAdmin');
+            window.location.reload();
+        }
+    </script>
+
+    <!-- ADMIN UPLOAD LOGIC -->
     <script src="js/admin.js"></script>
 </body>
 </html>

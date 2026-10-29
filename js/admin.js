@@ -1,5 +1,49 @@
 const API_URL = 'https://murinzamoviess.onrender.com/api';
 
+// --- 1. LOGIN LOGIC ---
+// Set your desired Username and Password here
+const ADMIN_USERNAME = "admin";
+const ADMIN_PASSWORD = "movieshow2026"; // Change this to a strong password!
+
+const loginScreen = document.getElementById('loginScreen');
+const adminPanel = document.getElementById('adminPanel');
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
+const logoutBtn = document.getElementById('logoutBtn');
+
+// Check if admin is already logged in (saved in browser session)
+document.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+        showAdminPanel();
+    }
+});
+
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const user = document.getElementById('adminUser').value;
+    const pass = document.getElementById('adminPass').value;
+
+    if (user === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
+        sessionStorage.setItem('isAdminLoggedIn', 'true');
+        loginError.classList.add('hidden');
+        showAdminPanel();
+    } else {
+        loginError.classList.remove('hidden');
+    }
+});
+
+function showAdminPanel() {
+    loginScreen.classList.add('hidden');
+    adminPanel.classList.remove('hidden');
+}
+
+logoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('isAdminLoggedIn');
+    window.location.reload(); // Reload page to show login screen again
+});
+
+
+// --- 2. ADD MOVIE LOGIC ---
 document.getElementById('addMovieForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -7,7 +51,6 @@ document.getElementById('addMovieForm').addEventListener('submit', async (e) => 
     submitBtn.innerText = "Uploading...";
     submitBtn.disabled = true;
 
-    // Prepare Data (Only add links if the user typed something)
     const watchUrl = document.getElementById('watchUrl').value;
     const downloadUrl = document.getElementById('downloadUrl').value;
     

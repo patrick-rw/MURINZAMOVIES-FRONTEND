@@ -5,74 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOVIE SHOW</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom Blue Theme Overrides */
-        .bg-theme { background-color: #0f172a; } /* Deep navy blue */
-        .accent-blue { background-color: #2563eb; color: white; }
-        .accent-blue:hover { background-color: #1d4ed8; }
-        .text-accent { color: #3b82f6; }
-        .card-gradient { background: linear-gradient(to top, #0f172a 0%, transparent 100%); }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-theme text-white font-sans">
 
     <!-- NAVBAR -->
-    <nav class="flex items-center justify-between px-8 py-4 bg-[#0b1121] sticky top-0 z-50">
+    <nav class="flex items-center justify-between px-4 md:px-8 py-4 bg-[#0b1121] sticky top-0 z-50">
         <div class="flex items-center space-x-2">
-            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-xl">GS</div>
-            <h1 class="text-2xl font-bold tracking-wider">MOVIE SHOW</h1>
+            <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-xl cursor-pointer" onclick="window.location.href='index.html'">GS</div>
+            <h1 class="text-xl md:text-2xl font-bold tracking-wider hidden sm:block">MOVIE SHOW</h1>
         </div>
         
-        <div class="flex-1 max-w-xl mx-8 relative">
-            <input type="text" placeholder="Type your search" class="w-full bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <div class="flex-1 max-w-xl mx-4 md:mx-8 relative">
+            <input type="text" id="searchInput" placeholder="Type your search" class="w-full bg-gray-800 text-white rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-500">
             <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <!-- Search Dropdown -->
+            <div id="searchResults" class="absolute top-12 left-0 w-full bg-gray-800 rounded-lg shadow-xl hidden max-h-60 overflow-y-auto z-50"></div>
         </div>
 
-        <div class="flex items-center space-x-4">
-            <button class="accent-blue px-4 py-2 rounded-md font-semibold text-sm">OSHAkur</button>
-            <button class="bg-gray-800 p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
+        <div class="flex items-center space-x-2 md:space-x-4">
+            <a href="admin.html" class="accent-blue px-3 md:px-4 py-2 rounded-md font-semibold text-xs md:text-sm">Admin Panel</a>
+            <button class="bg-gray-800 p-2 rounded-md md:hidden"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
         </div>
     </nav>
 
-    <!-- HERO BANNER (Featured Movie) -->
-    <header class="relative h-[60vh] w-full bg-cover bg-center" style="background-image: url('https://raw.githubusercontent.com/yourusername/your-repo/main/images/spiderman-banner.jpg');">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent"></div>
-        <div class="absolute bottom-10 left-10 max-w-2xl">
+    <!-- HERO BANNER (Dynamic) -->
+    <header id="heroBanner" class="relative h-[50vh] md:h-[60vh] w-full bg-cover bg-center bg-gray-900" style="background-image: url('https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=2070&auto=format&fit=crop');">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/50 to-transparent"></div>
+        <div class="absolute bottom-6 left-4 md:bottom-10 md:left-10 max-w-2xl">
             <div class="flex space-x-2 mb-2">
-                <span class="bg-red-600 text-xs font-bold px-2 py-1 rounded">FEATURED</span>
-                <span class="bg-gray-700 text-xs font-bold px-2 py-1 rounded">SCI-FI</span>
+                <span class="bg-blue-600 text-xs font-bold px-2 py-1 rounded">FEATURED</span>
+                <span class="bg-gray-700 text-xs font-bold px-2 py-1 rounded">HD</span>
             </div>
-            <h2 class="text-5xl font-extrabold mb-4">Spider-Man: Brand New Day Gaheza</h2>
-            <p class="text-gray-300 mb-6 text-sm line-clamp-3">Peter Parker devotes his life to protecting New York City as a full-time Spider-Man. But as the demands on him intensify, the pressure sparks a surprising physical evolution...</p>
+            <h2 id="heroTitle" class="text-3xl md:text-5xl font-extrabold mb-2 md:mb-4">Loading Latest...</h2>
+            <p id="heroDesc" class="text-gray-300 mb-4 md:mb-6 text-xs md:text-sm line-clamp-3">Please wait while we fetch the latest movies from the database...</p>
             <div class="flex space-x-4">
-                <button class="accent-blue px-6 py-3 rounded-md font-bold flex items-center"><svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> Watch Now</button>
-                <button class="bg-gray-800 border border-gray-600 px-6 py-3 rounded-md font-bold flex items-center hover:bg-gray-700">Trailer</button>
+                <button id="heroWatchBtn" class="accent-blue px-4 md:px-6 py-2 md:py-3 rounded-md font-bold flex items-center text-sm md:text-base"><svg class="w-4 h-4 md:w-5 md:h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> Watch Now</button>
             </div>
         </div>
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="px-8 pb-20 -mt-20 relative z-10">
+    <main class="px-4 md:px-8 pb-20 -mt-10 md:-mt-20 relative z-10">
         
         <!-- Section: Trending -->
         <section class="mb-12">
             <div class="flex justify-between items-end mb-4 border-b border-blue-900 pb-2">
-                <h3 class="text-2xl font-bold">Trending</h3>
-                <a href="#" class="text-sm text-blue-400 hover:text-blue-300">View More &rarr;</a>
+                <h3 class="text-xl md:text-2xl font-bold">Trending</h3>
+                <a href="#" class="text-xs md:text-sm text-blue-400 hover:text-blue-300">View More &rarr;</a>
             </div>
-            <div id="trending-container" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                <!-- Movie Cards will be injected here via JS -->
+            <div id="trending-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
+                <!-- Movie Cards injected via main.js -->
             </div>
         </section>
 
         <!-- Section: Recent -->
         <section class="mb-12">
             <div class="flex justify-between items-end mb-4 border-b border-blue-900 pb-2">
-                <h3 class="text-2xl font-bold">Recent</h3>
-                <a href="#" class="text-sm text-blue-400 hover:text-blue-300">View More &rarr;</a>
+                <h3 class="text-xl md:text-2xl font-bold">Recent</h3>
+                <a href="#" class="text-xs md:text-sm text-blue-400 hover:text-blue-300">View More &rarr;</a>
             </div>
-            <div id="recent-container" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                <!-- Movie Cards will be injected here via JS -->
+            <div id="recent-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-3 md:gap-4">
+                <!-- Movie Cards injected via main.js -->
             </div>
         </section>
 

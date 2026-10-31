@@ -1,105 +1,100 @@
-// frontend/js/movie.js
+// frontend/js/movie.js  -  Movie detail page
 const API_URL = 'https://murinzamoviess.onrender.com/api';
+
+const PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">' +
+    '<rect width="300" height="450" fill="#111827"/>' +
+    '<text x="150" y="230" fill="#4b5563" font-family="Arial" font-size="18" text-anchor="middle">No Image</text></svg>'
+);
+
 const movieContainer = document.getElementById('movie-detail');
+const movieId = new URLSearchParams(window.location.search).get('id');
 
-// Get the movie ID from the URL (e.g., movie.html?id=12345)
-const urlParams = new URLSearchParams(window.location.search);
-const movieId = urlParams.get('id');
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+));
+const safeImg = (u) => (/^https?:\/\//i.test(u || '') ? u : '');
+const safeLink = (u) => (/^https?:\/\//i.test(u || '') ? u : '');
 
-async function fetchMovieDetails() {
-    if (!movieId) {
-        movieContainer.innerHTML = '<p class="text-center text-red-500 mt-20 font-bold text-xl">No movie selected.</p>';
-        return;
+function notFound(title, text) {
+    movieContainer.innerHTML = `
+        <div class="text-center mt-20">
+            <h2 class="text-2xl font-bold text-red-500 mb-2">${esc(title)}</h2>
+            <p class="text-gray-400 mb-6">${esc(text)}</p>
+            <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-bold text-white transition">Go Back Home</a>
+        </div>`;
+}
+
+function linkButtons(links, kind) {
+    const valid = (Array.isArray(links) ? links : []).filter((l) => l && safeLink(l.url));
+    const isWatch = kind === 'watch';
+    const label = isWatch ? 'Watch Now' : 'Download';
+
+    if (!valid.length) {
+        return `<p class="text-gray-500 text-sm italic py-2">${isWatch ? 'No watch link available yet.' : 'No download link available yet.'}</p>`;
     }
 
+    const btnClass = isWatch
+        ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/30'
+        : 'bg-green-600 hover:bg-green-700 shadow-green-600/30';
+    const icon = isWatch
+        ? '<svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg>'
+        : '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>';
+
+    return valid.map((l) => `
+        <a href="${esc(safeLink(l.url))}" target="_blank" rel="noopener noreferrer"
+           class="${btnClass} flex items-center justify-center w-full px-6 py-3.5 rounded-lg text-white font-bold text-base shadow-lg transition transform hover:-translate-y-0.5 mb-3">
+            ${icon}${esc(l.quality && l.quality !== 'Watch' && l.quality !== 'Download' ? `${label} - ${l.quality}` : label)}
+        </a>`).join('');
+}
+
+async function fetchMovieDetails() {
+    if (!movieId) return notFound('No movie selected', 'Pick a movie from the home page.');
+
     try {
-        const res = await fetch(`${API_URL}/movies/${movieId}`);
-        if (!res.ok) throw new Error("Movie not found");
-        
+        const res = await fetch(`${API_URL}/movies/${encodeURIComponent(movieId)}`);
+        if (res.status === 404 || res.status === 400) return notFound('Movie Not Found', 'This movie does not exist or was deleted.');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const movie = await res.json();
 
-        // 1. Build Watch Links
-        let watchLinksHTML = '';
-        if (movie.watchLinks && movie.watchLinks.length > 0) {
-            watchLinksHTML = movie.watchLinks.map(link => `
-                <div class="flex justify-between items-center bg-[#111827] p-4 rounded-lg mb-3 border border-gray-700 hover:border-blue-500 transition">
-                    <span class="font-semibold text-white">${link.quality || 'Watch Online'}</span>
-                    <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded-md text-sm font-bold flex items-center text-white transition shadow-lg shadow-blue-600/30">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> Watch Now
-                    </a>
-                </div>
-            `).join('');
-        } else {
-            watchLinksHTML = '<p class="text-gray-500 text-sm italic py-2">No watch links available yet.</p>';
-        }
+        const poster = safeImg(movie.posterUrl);
+        document.title = `${movie.title} - MURINZA MOVIES`;
+        if (poster) document.getElementById('bgBlur').style.backgroundImage = `url("${poster.replace(/"/g, '%22')}")`;
 
-        // 2. Build Download Links
-        let downloadLinksHTML = '';
-        if (movie.downloadLinks && movie.downloadLinks.length > 0) {
-            downloadLinksHTML = movie.downloadLinks.map(link => `
-                <div class="flex justify-between items-center bg-[#111827] p-4 rounded-lg mb-3 border border-gray-700 hover:border-green-500 transition">
-                    <span class="font-semibold text-white">${link.quality || 'Download'}</span>
-                    <a href="${link.url}" target="_blank" rel="noopener noreferrer" class="bg-green-600 hover:bg-green-700 px-5 py-2 rounded-md text-sm font-bold flex items-center text-white transition shadow-lg shadow-green-600/30">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Download
-                    </a>
-                </div>
-            `).join('');
-        } else {
-            downloadLinksHTML = '<p class="text-gray-500 text-sm italic py-2">No download links available yet.</p>';
-        }
-
-        // 3. Render the full page
         movieContainer.innerHTML = `
-            <!-- Hero Image -->
-            <div class="relative w-full h-[40vh] md:h-[60vh] rounded-xl overflow-hidden mb-8 bg-gray-900 border border-gray-800">
-                <img src="${movie.posterUrl}" class="w-full h-full object-cover opacity-40 blur-sm" onerror="this.style.display='none'">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0f1c] via-[#0a0f1c]/50 to-transparent"></div>
-                
-                <div class="absolute bottom-0 left-0 p-6 md:p-10 w-full flex flex-col md:flex-row items-end md:items-center gap-6">
-                    <img src="${movie.posterUrl}" class="w-32 md:w-48 rounded-lg shadow-2xl border-2 border-gray-700 z-10" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
-                    
-                    <div class="z-10 flex-1">
-                        <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-2 leading-tight drop-shadow-lg">${movie.title}</h1>
-                        
-                        <div class="flex flex-wrap items-center gap-3 mb-4">
-                            <span class="bg-blue-600 text-xs font-bold px-3 py-1 rounded shadow-md uppercase">${movie.category}</span>
-                            ${movie.genre ? `<span class="bg-gray-700 text-xs font-bold px-3 py-1 rounded shadow-md uppercase">${movie.genre}</span>` : ''}
-                            <span class="text-gray-400 text-sm ml-2">Uploaded: ${new Date(movie.createdAt).toLocaleDateString()}</span>
+            <div class="flex flex-col md:flex-row gap-8 md:gap-10 items-center md:items-start">
+                <img src="${esc(poster)}" alt="${esc(movie.title)}"
+                     class="w-52 md:w-72 rounded-xl shadow-2xl border-2 border-gray-700 flex-shrink-0 bg-gray-800"
+                     onerror="this.onerror=null;this.src=PLACEHOLDER">
+
+                <div class="flex-1 w-full">
+                    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 drop-shadow-lg text-center md:text-left">${esc(movie.title)}</h1>
+
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-5">
+                        ${movie.category ? `<span class="bg-blue-600 text-xs font-bold px-3 py-1 rounded uppercase">${esc(movie.category)}</span>` : ''}
+                        ${movie.genre ? `<span class="bg-gray-700 text-xs font-bold px-3 py-1 rounded uppercase">${esc(movie.genre)}</span>` : ''}
+                        ${movie.isSeason ? '<span class="bg-yellow-600 text-xs font-bold px-3 py-1 rounded uppercase">Season</span>' : ''}
+                        <span class="text-gray-400 text-sm ml-1">Uploaded ${esc(new Date(movie.createdAt).toLocaleDateString())}</span>
+                    </div>
+
+                    <p class="text-gray-300 leading-relaxed mb-8 whitespace-pre-line text-center md:text-left">${esc(movie.description || 'No description available for this movie.')}</p>
+
+                    <div class="grid sm:grid-cols-2 gap-6">
+                        <div class="bg-[#111827]/80 backdrop-blur border border-gray-800 p-5 rounded-xl">
+                            <h3 class="text-lg font-bold mb-4 flex items-center"><span class="w-1.5 h-5 bg-blue-600 mr-2 rounded-full"></span>Watch Online</h3>
+                            ${linkButtons(movie.watchLinks, 'watch')}
                         </div>
-                        
-                        <p class="text-gray-300 text-sm md:text-base max-w-3xl leading-relaxed">${movie.description || 'No description available for this movie.'}</p>
+                        <div class="bg-[#111827]/80 backdrop-blur border border-gray-800 p-5 rounded-xl">
+                            <h3 class="text-lg font-bold mb-4 flex items-center"><span class="w-1.5 h-5 bg-green-600 mr-2 rounded-full"></span>Download</h3>
+                            ${linkButtons(movie.downloadLinks, 'download')}
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Links Section -->
-            <div class="grid md:grid-cols-2 gap-8 mt-4">
-                <div class="bg-[#0a0f1c] border border-gray-800 p-6 rounded-xl shadow-xl">
-                    <h3 class="text-xl font-bold mb-4 border-b border-gray-800 pb-2 flex items-center">
-                        <span class="w-1.5 h-5 bg-blue-600 mr-2 rounded-full"></span> Watch Online
-                    </h3>
-                    ${watchLinksHTML}
-                </div>
-                
-                <div class="bg-[#0a0f1c] border border-gray-800 p-6 rounded-xl shadow-xl">
-                    <h3 class="text-xl font-bold mb-4 border-b border-gray-800 pb-2 flex items-center">
-                        <span class="w-1.5 h-5 bg-green-600 mr-2 rounded-full"></span> Download Links
-                    </h3>
-                    ${downloadLinksHTML}
-                </div>
-            </div>
-        `;
+            </div>`;
     } catch (err) {
         console.error(err);
-        movieContainer.innerHTML = `
-            <div class="text-center mt-20">
-                <h2 class="text-2xl font-bold text-red-500 mb-2">Movie Not Found</h2>
-                <p class="text-gray-400 mb-6">The movie you are looking for does not exist or was deleted.</p>
-                <a href="index.html" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-bold text-white transition">Go Back Home</a>
-            </div>
-        `;
+        notFound('Could not load this movie', 'The server may be waking up. Please refresh in a few seconds.');
     }
 }
 
-// Run the function when the page loads
-document.addEventListener('DOMContentLoaded', fetchMovieDetails);
+fetchMovieDetails();

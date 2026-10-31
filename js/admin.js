@@ -205,15 +205,36 @@ $('sectionsContainer').addEventListener('click', (e) => {
     else if (action === 'add') openAddModal(category || '', !!trending);
 });
 
+const CACHE_KEY = 'murinza_movies_v1';
+function readCache() {
+    try { const d = JSON.parse(localStorage.getItem(CACHE_KEY)); return Array.isArray(d) ? d : null; } catch (_) { return null; }
+}
+function writeCache(data) {
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch (_) { /* ignore */ }
+}
+
 async function loadAdminData() {
     const container = $('sectionsContainer');
-    container.innerHTML = '<div class="flex justify-center items-center h-40"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div></div>';
+    const cached = readCache();
+
+    if (cached) {                       // show the last known movies instantly
+        allMoviesData = cached;
+        renderAdmin();
+    } else {
+        const card = '<div class="w-[140px] sm:w-[160px] md:w-[200px] flex-shrink-0 aspect-[2/3] rounded-lg bg-gray-800/60 animate-pulse"></div>';
+        container.innerHTML = `<div class="mb-10"><div class="h-7 w-40 bg-gray-800/60 rounded mb-4 animate-pulse"></div><div class="flex space-x-4 overflow-hidden">${card.repeat(8)}</div></div>`;
+    }
+
     try {
         const data = await api('/movies');
-        allMoviesData = Array.isArray(data) ? data : [];
-        renderAdmin();
+        const fresh = Array.isArray(data) ? data : [];
+        writeCache(fresh);
+        if (!cached || JSON.stringify(fresh) !== JSON.stringify(cached)) {
+            allMoviesData = fresh;
+            renderAdmin();
+        }
     } catch (err) {
-        if (err.message === 'Session expired') return;
+        if (err.message === 'Session expired' || cached) return;
         container.innerHTML = `
             <div class="text-center py-16">
                 <p class="text-gray-400 mb-4">${esc(err.message)}</p>

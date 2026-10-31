@@ -3,165 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURINZA Movies- Home</title>
+    <title>MURINZA MOVIES - Watch &amp; Download</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-[#0a0f1c] text-white font-sans pb-20 overflow-x-hidden">
+<body class="bg-[#0a0f1c] text-white font-sans overflow-x-hidden">
 
     <!-- NAVBAR -->
     <nav class="flex items-center justify-between px-4 md:px-8 py-4 bg-[#050810] sticky top-0 z-50 border-b border-gray-800/50">
-        <!-- Logo -->
-        <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href='index.html'">
-            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-xl text-blue-600 shadow-lg shadow-blue-500/20">GS</div>
-            <h1 class="text-xl md:text-2xl font-bold tracking-wide hidden sm:block">OSHakur Films</h1>
-        </div>
-        
-        <!-- Search Bar (Desktop) -->
+        <a href="index.html" class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-extrabold text-xl text-blue-600 shadow-lg shadow-blue-500/20">M</div>
+            <span class="text-xl md:text-2xl font-bold tracking-wide hidden sm:block">MURINZA <span class="text-blue-500">MOVIES</span></span>
+        </a>
+
+        <!-- Search (desktop) -->
         <div class="flex-1 max-w-2xl mx-4 relative hidden md:block">
-            <input type="text" id="searchInput" placeholder="Type your search" autocomplete="off" class="w-full bg-[#0a0f1c] text-white rounded-md py-2.5 px-4 pl-10 focus:outline-none border border-gray-700 focus:border-blue-500 transition-colors">
+            <input type="text" id="searchInput" placeholder="Search movies..." autocomplete="off" class="w-full bg-[#0a0f1c] text-white rounded-md py-2.5 px-4 pl-10 border border-gray-700">
             <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             <div id="searchResults" class="absolute top-14 left-0 w-full bg-[#111827] rounded-md shadow-2xl hidden max-h-96 overflow-y-auto z-50 border border-gray-700"></div>
         </div>
 
-        <!-- Right Side (No Admin Button + Menu Dropdown) -->
-        <div class="flex items-center space-x-3 relative">
-            <!-- Hamburger Button -->
-            <button id="menuBtn" class="bg-[#0a0f1c] border border-gray-700 hover:bg-gray-800 p-2 rounded-md transition focus:outline-none">
+        <!-- Hamburger -->
+        <div class="relative">
+            <button id="menuBtn" aria-label="Menu" class="bg-[#0a0f1c] border border-gray-700 hover:bg-gray-800 p-2 rounded-md transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
-
-            <!-- Dropdown Menu (Categories/Explanations) -->
-            <div id="dropdownMenu" class="absolute right-0 top-12 w-56 bg-[#111827] border border-gray-700 rounded-lg shadow-2xl hidden z-50 overflow-hidden">
+            <div id="dropdownMenu" class="absolute right-0 top-12 w-60 bg-[#111827] border border-gray-700 rounded-lg shadow-2xl hidden z-50 overflow-hidden">
                 <div class="px-4 py-3 border-b border-gray-800 bg-[#050810]">
-                    <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Movie Genres</p>
+                    <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Categories</p>
                 </div>
-                <ul class="py-2 text-sm text-gray-300">
-                    <li><a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Action</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Romance</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Horror</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Indian</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Cartoon</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Sci-Fi</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Drama</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Comedy</a></li>
-                    <li><a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Seasons</a></li>
-                </ul>
+                <ul id="menuCategories" class="py-2 text-sm text-gray-300 max-h-72 overflow-y-auto"></ul>
                 <div class="border-t border-gray-800 py-2 text-sm text-gray-300">
-                    <a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">About Us</a>
-                    <a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Terms & Conditions</a>
-                    <a href="#" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Privacy Policy</a>
+                    <a href="#contact" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">Contact Us</a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- MOBILE SEARCH -->
+    <!-- Search (mobile) -->
     <div class="px-4 py-3 md:hidden bg-[#050810] border-b border-gray-800 relative">
-        <input type="text" id="mobileSearchInput" placeholder="Search movies..." class="w-full bg-[#0a0f1c] text-white rounded-md py-2 px-4 border border-gray-700 focus:border-blue-500 focus:outline-none">
-        <div id="mobileSearchResults" class="absolute top-14 left-4 right-4 bg-[#111827] rounded-md shadow-2xl hidden max-h-60 overflow-y-auto z-50 border border-gray-700"></div>
+        <input type="text" id="mobileSearchInput" placeholder="Search movies..." autocomplete="off" class="w-full bg-[#0a0f1c] text-white rounded-md py-2 px-4 border border-gray-700">
+        <div id="mobileSearchResults" class="absolute top-14 left-4 right-4 bg-[#111827] rounded-md shadow-2xl hidden max-h-72 overflow-y-auto z-50 border border-gray-700"></div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <main class="px-0 md:px-8 max-w-[1600px] mx-auto mt-0 md:mt-6">
-        
-        <!-- HERO SECTION -->
-        <div id="heroSection" class="relative w-full h-[45vh] md:h-[60vh] md:rounded-xl overflow-hidden mb-8 bg-gray-900">
-            <div class="absolute inset-0 bg-cover bg-center transition-all duration-700" id="heroImage" style="background-image: url('https://images.unsplash.com/photo-1626814026160-2237a95fc5a0');"></div>
+
+        <!-- HERO (hidden until a real movie exists) -->
+        <section id="heroSection" class="hidden relative w-full h-[50vh] md:h-[60vh] md:rounded-xl overflow-hidden mb-8 bg-gray-900">
+            <div id="heroImage" class="absolute inset-0 bg-cover bg-center"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-[#0a0f1c] via-[#0a0f1c]/70 to-transparent"></div>
             <div class="absolute inset-0 bg-gradient-to-r from-[#0a0f1c] via-[#0a0f1c]/50 to-transparent"></div>
-            
-            <div class="absolute bottom-0 left-0 p-6 md:p-12 w-full md:w-2/3 z-10">
-                <div class="flex items-center space-x-2 mb-3">
-                    <span class="bg-blue-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider">Featured</span>
-                    <span class="text-gray-300 text-xs md:text-sm flex items-center bg-black/40 px-2 py-1 rounded backdrop-blur-sm">
-                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> 2 Parts
-                    </span>
-                </div>
-                
-                <h1 id="heroTitle" class="text-3xl md:text-5xl font-extrabold mb-3 drop-shadow-lg leading-tight">Loading Latest...</h1>
-                
-                <div class="flex items-center space-x-2 mb-4">
-                    <div class="w-6 h-6 md:w-8 md:h-8 bg-gray-600 rounded-full flex items-center justify-center text-xs font-bold">M</div>
-                    <span id="heroUploader" class="text-sm md:text-base text-gray-300 font-medium">Uploader</span>
-                </div>
-                
-                <p id="heroDesc" class="text-gray-300 text-sm md:text-base mb-6 line-clamp-3 md:line-clamp-4 max-w-2xl drop-shadow-md">Loading description...</p>
-                
-                <div class="flex space-x-3">
-                    <button id="heroBtn" class="bg-blue-600 hover:bg-blue-700 px-6 md:px-8 py-3 rounded-md font-bold flex items-center transition shadow-lg shadow-blue-600/30 text-sm md:text-base">
-                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> Watch Now
-                    </button>
-                </div>
-            </div>
-        </div>
 
-        <div id="sectionsContainer" class="px-4 md:px-0">
-            <div class="flex justify-center items-center h-40">
+            <div class="absolute bottom-0 left-0 p-6 md:p-12 w-full md:w-2/3 z-10">
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span id="heroBadge" class="bg-blue-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider">Featured</span>
+                    <span id="heroGenre" class="hidden text-gray-200 text-xs md:text-sm bg-black/40 px-2 py-1 rounded backdrop-blur-sm"></span>
+                </div>
+                <h1 id="heroTitle" class="text-3xl md:text-5xl font-extrabold mb-3 drop-shadow-lg leading-tight"></h1>
+                <p id="heroDesc" class="text-gray-300 text-sm md:text-base mb-6 line-clamp-3 md:line-clamp-4 max-w-2xl drop-shadow-md"></p>
+                <a id="heroBtn" href="#" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 px-6 md:px-8 py-3 rounded-md font-bold transition shadow-lg shadow-blue-600/30 text-sm md:text-base">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6z"></path></svg> Watch Now
+                </a>
+            </div>
+        </section>
+
+        <!-- CATEGORY ROWS (filled by js/main.js) -->
+        <div id="sectionsContainer" class="px-4 md:px-0 min-h-[40vh]">
+            <div id="loader" class="flex justify-center items-center h-40">
                 <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
             </div>
         </div>
     </main>
 
     <!-- FOOTER -->
-    <footer class="mt-16 bg-[#050810] border-t border-gray-800 py-10 px-4 md:px-8">
+    <footer id="contact" class="mt-16 bg-[#050810] border-t border-gray-800 py-10 px-4 md:px-8">
         <div class="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
                 <div class="flex items-center space-x-3 mb-4">
-                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center font-bold text-sm text-blue-600">GS</div>
-                    <h2 class="text-lg font-bold">OSHakur Films</h2>
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center font-extrabold text-sm text-blue-600">M</div>
+                    <h2 class="text-lg font-bold">MURINZA <span class="text-blue-500">MOVIES</span></h2>
                 </div>
                 <p class="text-gray-400 text-sm leading-relaxed">Reba Agasobanuoye aho waba uri hose kubuntu.</p>
             </div>
             <div>
                 <h3 class="text-white font-bold mb-4 border-l-2 border-blue-600 pl-2">Quick Links</h3>
                 <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="#" class="hover:text-blue-400 transition">About Us</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition">Privacy Policy</a></li>
-                    <li><a href="#" class="hover:text-blue-400 transition">Terms & Conditions</a></li>
+                    <li><a href="index.html" class="hover:text-blue-400 transition">Home</a></li>
+                    <li><a href="#sectionsContainer" class="hover:text-blue-400 transition">All Categories</a></li>
+                    <li><a href="#contact" class="hover:text-blue-400 transition">Contact</a></li>
                 </ul>
             </div>
             <div>
                 <h3 class="text-white font-bold mb-4 border-l-2 border-blue-600 pl-2">Follow Us</h3>
                 <ul class="space-y-2 text-sm text-gray-400">
-                    <li><a href="#" class="flex items-center hover:text-blue-400 transition">YouTube</a></li>
-                    <li><a href="#" class="flex items-center hover:text-blue-400 transition">Instagram</a></li>
-                    <li><a href="#" class="flex items-center hover:text-blue-400 transition">TikTok</a></li>
+                    <li><a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition">YouTube</a></li>
+                    <li><a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition">Instagram</a></li>
+                    <li><a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition">TikTok</a></li>
                 </ul>
             </div>
             <div>
                 <h3 class="text-white font-bold mb-4 border-l-2 border-blue-600 pl-2">Contact</h3>
                 <ul class="space-y-2 text-sm text-gray-400">
-                    <li>+250 788 821 628</li>
-                    <li>info@oshakurfilms.com</li>
+                    <li><a href="tel:+250788821628" class="hover:text-blue-400 transition">+250 788 821 628</a></li>
+                    <li><a href="mailto:info@oshakurfilms.com" class="hover:text-blue-400 transition">info@oshakurfilms.com</a></li>
                 </ul>
             </div>
         </div>
         <div class="max-w-[1600px] mx-auto mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-            Copyright © 2026 murinzamovies. All Rights Reserved.
+            Copyright &copy; 2026 MURINZA MOVIES. All Rights Reserved.
         </div>
     </footer>
 
-    <!-- MAIN SCRIPT -->
     <script src="js/main.js"></script>
-    
-    <!-- DROPDOWN LOGIC -->
-    <script>
-        const menuBtn = document.getElementById('menuBtn');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-
-        // Toggle menu on click
-        menuBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent closing immediately
-            dropdownMenu.classList.toggle('hidden');
-        });
-
-        // Close menu when clicking anywhere else
-        document.addEventListener('click', (e) => {
-            if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-                dropdownMenu.classList.add('hidden');
-            }
-        });
-    </script>
 </body>
 </html>

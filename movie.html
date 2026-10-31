@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MURINZA MOVIES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#0a0f1c] text-white font-sans overflow-x-hidden">
+
+    <!-- Blurred poster background (set by js/movie.js) -->
+    <div id="bgBlur" class="fixed inset-0 -z-10 bg-cover bg-center opacity-30 blur-2xl scale-110"></div>
+    <div class="fixed inset-0 -z-10 bg-gradient-to-b from-[#0a0f1c]/60 via-[#0a0f1c]/90 to-[#0a0f1c]"></div>
+
+    <nav class="flex items-center justify-between px-4 md:px-8 py-4 bg-[#050810]/90 backdrop-blur sticky top-0 z-50 border-b border-gray-800/50">
+        <a href="index.html" class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-extrabold text-xl text-blue-600 shadow-lg shadow-blue-500/20">M</div>
+            <span class="text-xl md:text-2xl font-bold tracking-wide hidden sm:block">MURINZA <span class="text-blue-500">MOVIES</span></span>
+        </a>
+        <a href="index.html" class="text-sm font-semibold text-gray-300 hover:text-white border border-gray-700 hover:bg-gray-800 px-4 py-2 rounded-md transition">&larr; Back to Home</a>
+    </nav>
+
+    <main id="movie-detail" class="px-4 md:px-8 max-w-6xl mx-auto py-8 min-h-[70vh]">
+        <div class="flex justify-center items-center h-60">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+        </div>
+    </main>
+
+    <footer class="mt-10 bg-[#050810] border-t border-gray-800 py-8 px-4 text-center text-sm text-gray-500">
+        Copyright &copy; 2026 MURINZA MOVIES. All Rights Reserved.
+    </footer>
+
+    <script src="js/movie.js"></script>
+</body>
+</html>

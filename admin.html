@@ -3,148 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - OSHakur Films</title>
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Dashboard - MURINZA MOVIES</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-[#0a0f1c] text-white font-sans pb-20 overflow-x-hidden">
+<body class="bg-[#0a0f1c] text-white font-sans overflow-x-hidden">
 
-    <!-- LOGIN SCREEN (Blocks view until logged in) -->
+    <!-- LOGIN SCREEN (the dashboard stays hidden until the server accepts the login) -->
     <div id="loginScreen" class="fixed inset-0 bg-[#0a0f1c] z-[100] flex items-center justify-center p-4">
         <div class="w-full max-w-md bg-[#111827] p-8 rounded-xl border border-gray-800 shadow-2xl">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-white text-blue-600 rounded-full flex items-center justify-center font-bold text-2xl mx-auto mb-4 shadow-lg shadow-blue-500/20">GS</div>
+                <div class="w-16 h-16 bg-white text-blue-600 rounded-full flex items-center justify-center font-extrabold text-3xl mx-auto mb-4 shadow-lg shadow-blue-500/20">M</div>
                 <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-                <p class="text-gray-400 text-sm mt-1">Login to manage movies</p>
+                <p class="text-gray-400 text-sm mt-1">Log in to manage movies</p>
             </div>
-            <form id="loginForm" class="space-y-4">
-                <input type="text" id="username" placeholder="Username" required class="w-full p-3 rounded bg-[#0a0f1c] border border-gray-700 focus:border-blue-500 focus:outline-none text-white">
-                <input type="password" id="password" placeholder="Password" required class="w-full p-3 rounded bg-[#0a0f1c] border border-gray-700 focus:border-blue-500 focus:outline-none text-white">
-                <p id="loginError" class="text-red-500 text-sm hidden text-center font-bold">Invalid Credentials!</p>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 font-bold py-3 rounded transition text-white shadow-lg shadow-blue-600/30">Login</button>
+            <form id="loginForm" class="space-y-4" autocomplete="off">
+                <input type="text" id="username" name="mm_admin_user" placeholder="Username" required autocomplete="username" class="w-full p-3 rounded bg-[#0a0f1c] border border-gray-700 text-white">
+                <input type="password" id="password" name="mm_admin_pass" placeholder="Password" required autocomplete="current-password" class="w-full p-3 rounded bg-[#0a0f1c] border border-gray-700 text-white">
+                <p id="loginError" class="text-red-500 text-sm hidden text-center font-bold"></p>
+                <button type="submit" id="loginBtn" class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 font-bold py-3 rounded transition text-white shadow-lg shadow-blue-600/30">Login</button>
             </form>
         </div>
     </div>
 
-    <!-- ADMIN NAVBAR -->
-    <nav class="flex items-center justify-between px-4 md:px-8 py-4 bg-[#050810] sticky top-0 z-40 border-b border-gray-800/50">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-bold text-xl text-blue-600">GS</div>
-            <h1 class="text-xl md:text-2xl font-bold hidden sm:block">Admin Mode</h1>
-        </div>
-        <div class="flex items-center space-x-3">
-            <a href="index.html" class="text-sm text-gray-300 hover:text-white transition hidden sm:block">View Public Site</a>
-            <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md font-semibold text-sm transition">Logout</button>
-        </div>
-    </nav>
+    <!-- ADMIN APP -->
+    <div id="adminApp" class="hidden">
 
-    <!-- MAIN CONTENT -->
-    <main class="px-4 md:px-8 max-w-[1600px] mx-auto mt-6">
-        
-        <!-- HERO EDIT SECTION -->
-        <div id="heroSection" class="relative w-full h-[40vh] md:h-[50vh] rounded-xl overflow-hidden mb-10 bg-gray-900 border border-gray-800 hidden">
-            <div class="absolute inset-0 bg-cover bg-center" id="heroImage"></div>
-            <div class="absolute inset-0 bg-gradient-to-r from-[#0a0f1c] via-[#0a0f1c]/70 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 p-6 md:p-10 w-full md:w-2/3">
-                <h1 id="heroTitle" class="text-3xl md:text-4xl font-bold mb-4 drop-shadow-lg"></h1>
-                <button id="heroEditBtn" class="bg-yellow-600 hover:bg-yellow-700 px-6 py-2.5 rounded font-bold flex items-center transition text-black shadow-lg">Edit Hero Movie</button>
+        <!-- NAVBAR (same look as the public site) -->
+        <nav class="flex items-center justify-between px-4 md:px-8 py-4 bg-[#050810] sticky top-0 z-50 border-b border-gray-800/50">
+            <a href="index.html" class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center font-extrabold text-xl text-blue-600 shadow-lg shadow-blue-500/20">M</div>
+                <span class="text-xl md:text-2xl font-bold tracking-wide hidden sm:block">MURINZA <span class="text-blue-500">MOVIES</span></span>
+                <span class="bg-yellow-600 text-black text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">Admin</span>
+            </a>
+
+            <div class="flex-1 max-w-2xl mx-4 relative hidden md:block">
+                <input type="text" id="searchInput" placeholder="Search movies to edit..." autocomplete="off" class="w-full bg-[#0a0f1c] text-white rounded-md py-2.5 px-4 pl-10 border border-gray-700">
+                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <div id="searchResults" class="absolute top-14 left-0 w-full bg-[#111827] rounded-md shadow-2xl hidden max-h-96 overflow-y-auto z-50 border border-gray-700"></div>
             </div>
+
+            <div class="flex items-center space-x-2">
+                <button id="addMovieBtn" class="bg-blue-600 hover:bg-blue-700 px-3 md:px-4 py-2 rounded-md font-bold text-sm transition">+ <span class="hidden sm:inline">Add Movie</span></button>
+                <button id="logoutBtn" class="bg-red-600 hover:bg-red-700 px-3 md:px-4 py-2 rounded-md font-semibold text-sm transition">Logout</button>
+                <div class="relative">
+                    <button id="menuBtn" aria-label="Menu" class="bg-[#0a0f1c] border border-gray-700 hover:bg-gray-800 p-2 rounded-md transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    <div id="dropdownMenu" class="absolute right-0 top-12 w-60 bg-[#111827] border border-gray-700 rounded-lg shadow-2xl hidden z-50 overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-800 bg-[#050810]">
+                            <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Categories</p>
+                        </div>
+                        <ul id="menuCategories" class="py-2 text-sm text-gray-300 max-h-72 overflow-y-auto"></ul>
+                        <div class="border-t border-gray-800 py-2 text-sm text-gray-300">
+                            <a href="index.html" class="block px-4 py-2 hover:bg-blue-600 hover:text-white transition">View Public Site</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Search (mobile) -->
+        <div class="px-4 py-3 md:hidden bg-[#050810] border-b border-gray-800 relative">
+            <input type="text" id="mobileSearchInput" placeholder="Search movies to edit..." autocomplete="off" class="w-full bg-[#0a0f1c] text-white rounded-md py-2 px-4 border border-gray-700">
+            <div id="mobileSearchResults" class="absolute top-14 left-4 right-4 bg-[#111827] rounded-md shadow-2xl hidden max-h-72 overflow-y-auto z-50 border border-gray-700"></div>
         </div>
 
-        <!-- DYNAMIC SECTIONS -->
-        <div id="sectionsContainer">
-            <!-- Sections injected by admin.js -->
-        </div>
-    </main>
+        <main class="px-0 md:px-8 max-w-[1600px] mx-auto mt-0 md:mt-6">
 
-    <!-- HIDDEN MODAL FORM -->
-    <div id="movieModal" class="fixed inset-0 bg-black/80 z-[90] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-[#111827] w-full max-w-2xl rounded-xl border border-gray-700 max-h-[90vh] overflow-y-auto shadow-2xl relative">
-            
-            <div class="p-6 border-b border-gray-700 flex justify-between items-center sticky top-0 bg-[#111827] z-10 rounded-t-xl">
+            <!-- HERO (hidden until a real movie exists) -->
+            <section id="heroSection" class="hidden relative w-full h-[50vh] md:h-[60vh] md:rounded-xl overflow-hidden mb-8 bg-gray-900">
+                <div id="heroImage" class="absolute inset-0 bg-cover bg-center"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#0a0f1c] via-[#0a0f1c]/70 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-[#0a0f1c] via-[#0a0f1c]/50 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 p-6 md:p-12 w-full md:w-2/3 z-10">
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span id="heroBadge" class="bg-blue-600 text-[10px] md:text-xs font-bold px-2 py-1 rounded shadow-md uppercase tracking-wider">Featured</span>
+                        <span id="heroGenre" class="hidden text-gray-200 text-xs md:text-sm bg-black/40 px-2 py-1 rounded backdrop-blur-sm"></span>
+                    </div>
+                    <h1 id="heroTitle" class="text-3xl md:text-5xl font-extrabold mb-3 drop-shadow-lg leading-tight"></h1>
+                    <p id="heroDesc" class="text-gray-300 text-sm md:text-base mb-6 line-clamp-3 md:line-clamp-4 max-w-2xl drop-shadow-md"></p>
+                    <button id="heroEditBtn" class="bg-yellow-600 hover:bg-yellow-700 px-6 md:px-8 py-3 rounded-md font-bold transition text-black shadow-lg text-sm md:text-base">Edit Hero Movie</button>
+                </div>
+            </section>
+
+            <!-- CATEGORY ROWS (filled by js/admin.js) -->
+            <div id="sectionsContainer" class="px-4 md:px-0 min-h-[40vh]"></div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer id="contact" class="mt-16 bg-[#050810] border-t border-gray-800 py-10 px-4 md:px-8">
+            <div class="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center font-extrabold text-sm text-blue-600">M</div>
+                        <h2 class="text-lg font-bold">MURINZA <span class="text-blue-500">MOVIES</span></h2>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">Reba Agasobanuoye aho waba uri hose kubuntu.</p>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-4 border-l-2 border-blue-600 pl-2">Quick Links</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="index.html" class="hover:text-blue-400 transition">Home</a></li>
+                        <li><a href="#sectionsContainer" class="hover:text-blue-400 transition">All Categories</a></li>
+                        <li><a href="#contact" class="hover:text-blue-400 transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-4 border-l-2 border-blue-600 pl-2">Follow Us</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition">YouTube</a></li>
+                        <li><a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition">Instagram</a></li>
+                        <li><a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" class="hover:text-blue-400 transition">TikTok</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-4 border-l-2 border-blue-600 pl-2">Contact</h3>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="tel:+250788821628" class="hover:text-blue-400 transition">+250 788 821 628</a></li>
+                        <li><a href="mailto:info@oshakurfilms.com" class="hover:text-blue-400 transition">info@oshakurfilms.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="max-w-[1600px] mx-auto mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
+                Copyright &copy; 2026 MURINZA MOVIES. All Rights Reserved.
+            </div>
+        </footer>
+    </div>
+
+    <!-- ADD / EDIT MODAL -->
+    <div id="movieModal" class="fixed inset-0 bg-black/80 z-[90] hidden items-center justify-center p-4">
+        <div class="bg-[#111827] w-full max-w-2xl rounded-xl border border-gray-700 max-h-[90vh] overflow-y-auto relative">
+            <div class="p-5 border-b border-gray-700 flex justify-between items-center sticky top-0 bg-[#111827] z-10 rounded-t-xl">
                 <h2 id="modalTitle" class="text-xl font-bold text-blue-400">Add New Movie</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+                <button type="button" id="closeModalBtn" aria-label="Close" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
             </div>
 
-            <form id="movieForm" class="p-6 space-y-4">
-                <input type="hidden" id="movieId">
-                
-                <div class="grid grid-cols-2 gap-4">
+            <!-- autocomplete="off" + unique name attributes + type="text" on every URL field -->
+            <form id="movieForm" class="p-5 space-y-4" autocomplete="off" novalidate>
+                <input type="hidden" id="movieId" name="mm_movie_id">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm text-gray-400 mb-1">Title</label>
-                        <input type="text" id="title" required class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500 text-white">
+                        <label for="title" class="block text-sm text-gray-400 mb-1">Title</label>
+                        <input type="text" id="title" name="mm_title" autocomplete="off" required class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded text-white">
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-400 mb-1">Category</label>
-                        <input type="text" id="category" required class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500 text-white">
+                        <label for="category" class="block text-sm text-gray-400 mb-1">Category</label>
+                        <input type="text" id="category" name="mm_category" list="categoryList" autocomplete="off" required class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded text-white">
+                        <datalist id="categoryList"></datalist>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm text-gray-400 mb-1">Genre</label>
-                        <input type="text" id="genre" class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500 text-white">
+                        <label for="genre" class="block text-sm text-gray-400 mb-1">Genre</label>
+                        <input type="text" id="genre" name="mm_genre" autocomplete="off" class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded text-white">
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-400 mb-1">Poster URL</label>
-                        <!-- Using text instead of url to prevent browser autofill -->
-                        <input type="text" id="posterUrl" required class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500 text-white">
+                        <label for="posterUrl" class="block text-sm text-gray-400 mb-1">Poster URL</label>
+                        <input type="text" id="posterUrl" name="mm_poster_link" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://raw.githubusercontent.com/..." required class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded text-white">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm text-gray-400 mb-1">Description</label>
-                    <textarea id="description" rows="3" class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500 text-white"></textarea>
+                    <label for="description" class="block text-sm text-gray-400 mb-1">Description</label>
+                    <textarea id="description" name="mm_description" rows="3" autocomplete="off" class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded text-white"></textarea>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm text-gray-400 mb-1">Watch Link (Part A)</label>
-                        <input type="text" id="watchUrl" placeholder="https://..." class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500 text-white">
+                        <label for="watchUrl" class="block text-sm text-gray-400 mb-1">Watch Link</label>
+                        <input type="text" id="watchUrl" name="mm_watch_link" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://..." class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded text-white">
                     </div>
                     <div>
-                        <label class="block text-sm text-gray-400 mb-1">Download Link (Part A)</label>
-                        <input type="text" id="downloadUrl" placeholder="https://..." class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded focus:border-blue-500 text-white">
+                        <label for="downloadUrl" class="block text-sm text-gray-400 mb-1">Download Link</label>
+                        <input type="text" id="downloadUrl" name="mm_download_link" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://..." class="w-full p-2 bg-[#0a0f1c] border border-gray-700 rounded text-white">
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-2 pt-2">
-                    <input type="checkbox" id="isTrending" class="w-4 h-4 text-blue-600 rounded bg-gray-700 border-gray-600 focus:ring-blue-500">
-                    <label for="isTrending" class="text-sm text-gray-300">Show in Hero/Trending Section</label>
+                <div class="flex flex-wrap items-center gap-x-6 gap-y-2 pt-1">
+                    <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer">
+                        <input type="checkbox" id="isTrending" class="w-4 h-4 accent-blue-600"> <span>Show in Hero / Trending</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-sm text-gray-300 cursor-pointer">
+                        <input type="checkbox" id="isSeason" class="w-4 h-4 accent-blue-600"> <span>Is a Season</span>
+                    </label>
                 </div>
-                
-                <button type="submit" id="saveBtn" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded font-bold mt-4 text-white transition">Save Movie</button>
+
+                <p id="formError" class="hidden text-red-400 text-sm font-semibold"></p>
+                <button type="submit" id="saveBtn" class="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 py-3 rounded font-bold text-white transition">Save Movie</button>
             </form>
         </div>
     </div>
 
-    <!-- AUTHENTICATION LOGIC -->
-    <script>
-        if(sessionStorage.getItem('isAdmin') !== 'true') {
-            document.getElementById('loginScreen').classList.remove('hidden');
-        } else {
-            document.getElementById('loginScreen').classList.add('hidden');
-            // Load the Admin Logic dynamically ONLY if logged in
-            const script = document.createElement('script');
-            script.src = 'js/admin.js';
-            document.body.appendChild(script);
-        }
+    <!-- TOAST -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[120] hidden px-5 py-3 rounded-lg font-semibold text-sm shadow-2xl"></div>
 
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            // Default login: admin / movie123
-            if(document.getElementById('username').value === "admin" && document.getElementById('password').value === "movie123") {
-                sessionStorage.setItem('isAdmin', 'true');
-                window.location.reload();
-            } else {
-                document.getElementById('loginError').classList.remove('hidden');
-            }
-        });
-
-        function logout() {
-            sessionStorage.removeItem('isAdmin');
-            window.location.href = 'index.html';
-        }
-    </script>
+    <!-- Loaded normally (not injected), so it always runs after the DOM above exists -->
+    <script src="js/admin.js"></script>
 </body>
 </html>

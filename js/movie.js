@@ -48,52 +48,64 @@ function linkButtons(links, kind) {
         </a>`).join('');
 }
 
+const CACHE_KEY = 'murinza_movies_v1';
+function readCache() {
+    try { const d = JSON.parse(localStorage.getItem(CACHE_KEY)); return Array.isArray(d) ? d : null; } catch (_) { return null; }
+}
+
+function renderMovie(movie) {
+    const poster = safeImg(movie.posterUrl);
+    document.title = `${movie.title} - MURINZA MOVIES`;
+    if (poster) document.getElementById('bgBlur').style.backgroundImage = `url("${poster.replace(/"/g, '%22')}")`;
+
+    movieContainer.innerHTML = `
+        <div class="flex flex-col md:flex-row gap-8 md:gap-10 items-center md:items-start">
+            <img src="${esc(poster)}" alt="${esc(movie.title)}"
+                 class="w-52 md:w-72 rounded-xl shadow-2xl border-2 border-gray-700 flex-shrink-0 bg-gray-800"
+                 onerror="this.onerror=null;this.src=PLACEHOLDER">
+
+            <div class="flex-1 w-full">
+                <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 drop-shadow-lg text-center md:text-left">${esc(movie.title)}</h1>
+
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-5">
+                    ${movie.category ? `<span class="bg-blue-600 text-xs font-bold px-3 py-1 rounded uppercase">${esc(movie.category)}</span>` : ''}
+                    ${movie.genre ? `<span class="bg-gray-700 text-xs font-bold px-3 py-1 rounded uppercase">${esc(movie.genre)}</span>` : ''}
+                    ${movie.isSeason ? '<span class="bg-yellow-600 text-xs font-bold px-3 py-1 rounded uppercase">Season</span>' : ''}
+                    <span class="text-gray-400 text-sm ml-1">Uploaded ${esc(new Date(movie.createdAt).toLocaleDateString())}</span>
+                </div>
+
+                <p class="text-gray-300 leading-relaxed mb-8 whitespace-pre-line text-center md:text-left">${esc(movie.description || 'No description available for this movie.')}</p>
+
+                <div class="grid sm:grid-cols-2 gap-6">
+                    <div class="bg-[#111827]/80 backdrop-blur border border-gray-800 p-5 rounded-xl">
+                        <h3 class="text-lg font-bold mb-4 flex items-center"><span class="w-1.5 h-5 bg-blue-600 mr-2 rounded-full"></span>Watch Online</h3>
+                        ${linkButtons(movie.watchLinks, 'watch')}
+                    </div>
+                    <div class="bg-[#111827]/80 backdrop-blur border border-gray-800 p-5 rounded-xl">
+                        <h3 class="text-lg font-bold mb-4 flex items-center"><span class="w-1.5 h-5 bg-green-600 mr-2 rounded-full"></span>Download</h3>
+                        ${linkButtons(movie.downloadLinks, 'download')}
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+
 async function fetchMovieDetails() {
     if (!movieId) return notFound('No movie selected', 'Pick a movie from the home page.');
+
+    // Instant render from the homepage cache (if this movie is in it)
+    const cachedMovie = (readCache() || []).find((m) => m._id === movieId);
+    if (cachedMovie) renderMovie(cachedMovie);
 
     try {
         const res = await fetch(`${API_URL}/movies/${encodeURIComponent(movieId)}`);
         if (res.status === 404 || res.status === 400) return notFound('Movie Not Found', 'This movie does not exist or was deleted.');
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const movie = await res.json();
-
-        const poster = safeImg(movie.posterUrl);
-        document.title = `${movie.title} - MURINZA MOVIES`;
-        if (poster) document.getElementById('bgBlur').style.backgroundImage = `url("${poster.replace(/"/g, '%22')}")`;
-
-        movieContainer.innerHTML = `
-            <div class="flex flex-col md:flex-row gap-8 md:gap-10 items-center md:items-start">
-                <img src="${esc(poster)}" alt="${esc(movie.title)}"
-                     class="w-52 md:w-72 rounded-xl shadow-2xl border-2 border-gray-700 flex-shrink-0 bg-gray-800"
-                     onerror="this.onerror=null;this.src=PLACEHOLDER">
-
-                <div class="flex-1 w-full">
-                    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight mb-4 drop-shadow-lg text-center md:text-left">${esc(movie.title)}</h1>
-
-                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-5">
-                        ${movie.category ? `<span class="bg-blue-600 text-xs font-bold px-3 py-1 rounded uppercase">${esc(movie.category)}</span>` : ''}
-                        ${movie.genre ? `<span class="bg-gray-700 text-xs font-bold px-3 py-1 rounded uppercase">${esc(movie.genre)}</span>` : ''}
-                        ${movie.isSeason ? '<span class="bg-yellow-600 text-xs font-bold px-3 py-1 rounded uppercase">Season</span>' : ''}
-                        <span class="text-gray-400 text-sm ml-1">Uploaded ${esc(new Date(movie.createdAt).toLocaleDateString())}</span>
-                    </div>
-
-                    <p class="text-gray-300 leading-relaxed mb-8 whitespace-pre-line text-center md:text-left">${esc(movie.description || 'No description available for this movie.')}</p>
-
-                    <div class="grid sm:grid-cols-2 gap-6">
-                        <div class="bg-[#111827]/80 backdrop-blur border border-gray-800 p-5 rounded-xl">
-                            <h3 class="text-lg font-bold mb-4 flex items-center"><span class="w-1.5 h-5 bg-blue-600 mr-2 rounded-full"></span>Watch Online</h3>
-                            ${linkButtons(movie.watchLinks, 'watch')}
-                        </div>
-                        <div class="bg-[#111827]/80 backdrop-blur border border-gray-800 p-5 rounded-xl">
-                            <h3 class="text-lg font-bold mb-4 flex items-center"><span class="w-1.5 h-5 bg-green-600 mr-2 rounded-full"></span>Download</h3>
-                            ${linkButtons(movie.downloadLinks, 'download')}
-                        </div>
-                    </div>
-                </div>
-            </div>`;
+        if (!cachedMovie || JSON.stringify(movie) !== JSON.stringify(cachedMovie)) renderMovie(movie);
     } catch (err) {
         console.error(err);
-        notFound('Could not load this movie', 'The server may be waking up. Please refresh in a few seconds.');
+        if (!cachedMovie) notFound('Could not load this movie', 'The server may be waking up. Please refresh in a few seconds.');
     }
 }
 
